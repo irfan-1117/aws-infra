@@ -1,0 +1,43 @@
+---
+- name: Install Node.js 14
+  hosts: applications-server
+  gather_facts: true
+  become: true
+
+  tasks:
+    - name: Update package cache
+      yum:
+        name: '*'
+        state: latest
+      register: yum_update
+      when: ansible_os_family == 'RedHat'
+
+    - name: Install Node.js dependencies
+      yum:
+        name: '{{ item }}'
+        state: present
+      loop:
+        - gcc
+        - gcc-c++
+        - make
+        - openssl-devel
+        - git
+      when: ansible_os_family == 'RedHat'
+
+    - name: Add NodeSource repository
+      yum_repository:
+        name: nodesource
+        description: Node.js repository
+        baseurl: https://rpm.nodesource.com/pub_14.x/el/7/$basearch
+        gpgcheck: yes
+        gpgkey: https://rpm.nodesource.com/pub/el/NODESOURCE-GPG-SIGNING-KEY-EL
+        enabled: yes
+      when: ansible_os_family == 'RedHat'
+
+    - name: Install Node.js
+      yum:
+        name: nodejs
+        state: present
+      when: ansible_os_family == 'RedHat'
+
+

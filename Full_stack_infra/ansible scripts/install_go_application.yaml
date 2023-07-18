@@ -1,0 +1,53 @@
+---
+- name: Install Go on Amazon Linux
+  hosts: 
+  gather_facts: yes
+  become: yes
+
+  tasks:
+    - name: Update package cache
+      yum:
+        name: "*"
+        state: latest
+      become: yes
+
+    - name: Install required dependencies
+      yum:
+        name:
+          - wget
+          - tar
+        state: present
+      become: yes
+
+    - name: Download Go binary
+      get_url:
+        url: "https://go.dev/dl/go1.19.11.linux-386.tar.gz"
+        dest: "/tmp/go.tar.gz"
+        mode: 0644
+      become: yes
+
+    - name: Extract Go archive
+      unarchive:
+        src: "/tmp/go.tar.gz"
+        dest: "/usr/local"
+        remote_src: yes
+        mode: 0755
+        creates: "/usr/local/go"
+      become: yes
+
+    - name: Set Go environment variables
+      lineinfile:
+        path: "{{ item.path }}"
+        line: "{{ item.line }}"
+        create: yes
+        insertafter: EOF
+      with_items:
+        - { path: "/etc/profile.d/go.sh", line: 'export GOROOT=/usr/local/go' }
+        - { path: "/etc/profile.d/go.sh", line: 'export GOPATH=$HOME/go' }
+        - { path: "/etc/profile.d/go.sh", line: 'export PATH=$GOPATH/bin:$GOROOT/bin:$PATH' }
+      become: yes
+
+    - name: Source the updated profile
+      shell: |
+        source /etc/profile.d/go.sh
+      become: yes

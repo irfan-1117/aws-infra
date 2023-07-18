@@ -1,0 +1,36 @@
+---
+- name: Install Go on localhost
+  hosts: localhost
+  become: yes
+
+  tasks:
+    - name: Update apt cache
+      apt:
+        update_cache: yes
+      become: yes
+
+    - name: Install prerequisite packages
+      apt:
+        name:
+          - wget
+          - tar
+      become: yes
+
+    - name: Download Go binary
+      get_url:
+        url: "https://go.dev/dl/go1.19.11.linux-386.tar.gz"
+        dest: "/tmp/go.tar.gz"
+
+    - name: Extract Go tarball
+      unarchive:
+        src: "/tmp/go.tar.gz"
+        dest: "/usr/local"
+        remote_src: yes
+
+    - name: Set Go environment variables
+      lineinfile:
+        path: "{{ ansible_env.HOME }}/.bashrc"
+        line: |
+          export GOPATH="{{ ansible_env.HOME }}/go"
+          export PATH="$PATH:/usr/local/go/bin:$GOPATH/bin"
+      become: yes

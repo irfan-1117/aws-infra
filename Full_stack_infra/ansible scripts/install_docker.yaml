@@ -1,0 +1,30 @@
+---
+- name: Install Docker on Amazon Linux EC2
+  hosts: applications-server
+  gather_facts: yes
+  become: true
+  
+  tasks:
+    - name: Install required packages
+      yum:
+        name: "{{ item }}"
+        state: present
+      with_items:
+        - amazon-linux-extras
+        - device-mapper-persistent-data
+        - lvm2
+        
+    - name: Enable Docker CE repository
+      shell: amazon-linux-extras enable docker
+      changed_when: false
+      
+    - name: Install Docker CE
+      yum:
+        name: docker
+        state: present
+      
+    - name: Start and enable Docker service
+      service:
+        name: docker
+        state: started
+        enabled: yes

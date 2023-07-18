@@ -1,0 +1,19 @@
+---
+- name: Install Node.js on localhost
+  hosts: localhost
+  become: yes
+  gather_facts: yes
+
+  tasks:
+    - name: Update apt cache
+      apt:
+        update_cache: yes
+      become: yes
+
+    - name: Install Node.js and npm
+      apt:
+        name:
+          - nodejs
+          - npm
+        state: present
+      become: yes

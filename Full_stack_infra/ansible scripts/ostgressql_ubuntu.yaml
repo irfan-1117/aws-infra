@@ -1,0 +1,15 @@
+---
+- name: Install PostgreSQL on localhost
+  hosts: localhost
+  become: true
+  gather_facts: false
+
+  tasks:
+    - name: Update apt cache
+      apt:
+        update_cache: yes
+
+    - name: Install PostgreSQL
+      apt:
+        name: postgresql
+        state: present

@@ -1,0 +1,60 @@
+---
+- name: Install kubeadm and set up Kubernetes cluster
+  hosts: kubernetes-master
+  become: true
+  tasks:
+    - name: Update apt cache
+      yum:
+        name: "*"
+        state: latest
+      become: true
+
+    - name: Install dependencies
+      yum:
+        name: ['docker', 'yum-utils', 'device-mapper-persistent-data', 'lvm2']
+        state: latest
+      become: true
+
+    - name: Configure Docker repository
+      command: amazon-linux-extras install docker
+      become: true
+
+    - name: Start and enable Docker service
+      service:
+        name: docker
+        state: started
+        enabled: true
+      become: true
+
+    - name: Add Docker to sudoers
+      lineinfile:
+        dest: /etc/sudoers
+        line: "{{ ansible_user }} ALL=(ALL) NOPASSWD: /usr/bin/docker"
+        state: present
+      become: true
+
+    - name: Install kubeadm, kubelet, and kubectl
+      command: yum install -y kubelet kubeadm kubectl --disableexcludes=kubernetes
+      become: true
+
+    - name: Start and enable kubelet service
+      service:
+        name: kubelet
+        state: started
+        enabled: true
+      become: true
+
+    - name: Initialize Kubernetes cluster
+      command: kubeadm init --pod-network-cidr=10.244.0.0/16
+      become: true
+      register: kubeadm_output
+      changed_when: false
+
+    - name: Set up kubeconfig for the user
+      command: "{{ kubeadm_output.stdout_lines[-1] }}"
+      become: true
+
+    - name: Install Calico network plugin
+      command: kubectl apply -f https://docs.projectcalico.org/manifests/calico.yaml
+      become: true
+      when: inventory_hostname == 'your_master_node'
