@@ -1,5 +1,9 @@
 pipeline {
     agent any
+    
+    tools {
+      terraform 'Terraform'
+    }
 
     stages {
 
@@ -11,14 +15,14 @@ pipeline {
 
         stage('Checkout SCM') {
             steps {
-                
+              checkout scmGit(branches: [[name: '*/development']], extensions: [], userRemoteConfigs: [[url: 'https://github.com/irfan-1117/aws-infra.git']])
             }
         }
 
-        stage('Build Image') {
+        stage('Backend-s3') {
             steps {
                 script {
-                    
+                  sh "terraform init ./backend-support"
                 }  
             }
         }
