@@ -1,6 +1,6 @@
 ---
 - name: Install Go on localhost
-  hosts: localhost
+  hosts: application-server
   become: yes
 
   tasks:

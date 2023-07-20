@@ -1,6 +1,6 @@
 ---
 - name: Install Docker on Amazon Linux EC2
-  hosts: applications-server
+  hosts: application-server
   gather_facts: yes
   become: true
   

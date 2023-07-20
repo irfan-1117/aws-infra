@@ -108,23 +108,31 @@ resource "aws_instance" "application-host" {
   user_data = <<-EOF
     #!/bin/bash
 
-    # Update system packages
-      sudo apt update -y
+    # Check if the script is being run with root privileges
+    if [[ $EUID -ne 0 ]]; then
+      echo "This script must be run as root."
+      exit 1
+    fi
 
-    # Create a new user
-      sudo useradd -m appuser
+    # Define the username and password
+    USERNAME="appuser"
+    PASSWORD="appuser"
 
-    # Add the user to the sudoers file
-      sudo bash -c 'echo "appuser ALL=(ALL) NOPASSWD:ALL" >> /etc/sudoers'
+    # Create the user
+    useradd -m -s /bin/bash "$USERNAME"
 
-    # Replace 'yes' with 'no' if you want to disable PasswordAuthentication
-      sudo sed -i 's/#PubkeyAuthentication yes/PubkeyAuthentication yes/' /etc/ssh/sshd_config
-      
-    # Replace 'yes' with 'no' if you want to disable PasswordAuthentication  
-      sudo sed -i 's/#PasswordAuthentication yes/PasswordAuthentication yes/' /etc/ssh/sshd_config
+    # Set the password for the user
+    echo "$USERNAME:$PASSWORD" | chpasswd
+
+    # Add the user to the sudo group (visudo)
+    usermod -aG sudo "$USERNAME"
+
+    # Enable password and public key authentication in SSH
+    sed -i 's/#PasswordAuthentication yes/PasswordAuthentication yes/g' /etc/ssh/sshd_config
+    sed -i 's/#PubkeyAuthentication yes/PubkeyAuthentication yes/g' /etc/ssh/sshd_config
 
     # Restart the SSH service
-      sudo systemctl restart sshd
+    systemctl restart ssh
   EOF
 
   tags = {

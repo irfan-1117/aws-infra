@@ -1,6 +1,6 @@
 ---
 - name: Install Node.js on localhost
-  hosts: localhost
+  hosts: application-server
   become: yes
   gather_facts: yes
 
