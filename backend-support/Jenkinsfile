@@ -22,7 +22,8 @@ pipeline {
         stage('Backend-s3') {
             steps {
                 script {
-                  sh "terraform init ./backend-support"
+                  sh "cd $WORKSPACE/backend-support"
+                  sh "terraform init"
                 }  
             }
         }
