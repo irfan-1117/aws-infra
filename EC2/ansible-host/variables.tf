@@ -2,7 +2,7 @@ variable "region" {
   default = "us-east-1"
 }
 variable "instance_type" {
-  default = "t2.medium"
+  default = "t2.micro"
 }
 variable "prefix" {
   default = "techverito"

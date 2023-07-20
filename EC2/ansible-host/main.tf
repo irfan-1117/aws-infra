@@ -70,7 +70,6 @@ data "aws_ami" "ubuntu" {
 }
 
 ### creation of ansible-host
-
 resource "aws_instance" "ansible-host" {
   ami                         = data.aws_ami.ubuntu.id
   instance_type               = var.instance_type
@@ -131,7 +130,5 @@ resource "aws_instance" "ansible-host" {
     Name      = "${var.prefix}-ansible-host"
     createdBy = "infra-${var.prefix}/base"
   }
-
-
 }
 ### end of ansible-host

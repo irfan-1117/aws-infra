@@ -1,0 +1,26 @@
+pipeline {
+    agent any
+
+    stages {
+
+        stage('clean Workspace') {
+            steps {
+                cleanWs()
+              }
+        }
+
+        stage('Checkout SCM') {
+            steps {
+                
+            }
+        }
+
+        stage('Build Image') {
+            steps {
+                script {
+                    
+                }  
+            }
+        }
+    }
+}
