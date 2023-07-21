@@ -22,8 +22,10 @@ pipeline {
         stage('Backend-s3') {
             steps {
                 script {
-                  sh "cd $WORKSPACE/backend-support"
-                  sh "terraform init"
+                  withCredentials([usernameColonPassword(credentialsId: 'AWS-CRED', variable: 'AWS')]) {
+                     sh "cd $WORKSPACE/backend-support"
+                     sh "terraform init"
+                  }
                 }  
             }
         }
