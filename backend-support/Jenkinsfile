@@ -1,20 +1,22 @@
 pipeline {
     agent any
-
-    withCredentials([usernameColonPassword(credentialsId: 'AWS-CRED', variable: 'AWS')])
     
+    environment {
+     AWS_CRED = credentials('AWS-ID')
+    }
+
     tools {
       terraform 'Terraform'
     }
 
     stages {
-
-        stage('clean Workspace') {
+        
+        stage('Clean workspace') {
             steps {
-                cleanWs()
-              }
+              cleanWs()
+            }
         }
-
+        
         stage('Checkout SCM') {
             steps {
               checkout scmGit(branches: [[name: '*/development']], extensions: [], userRemoteConfigs: [[url: 'https://github.com/irfan-1117/aws-infra.git']])
@@ -24,10 +26,14 @@ pipeline {
         stage('Backend-s3') {
             steps {
                 script {
-                     sh "cd $WORKSPACE/backend-support"
-                     sh "terraform init"
-                  }
-                }  
-            }
+                  sh '''  
+                     cd ./backend-support
+                     terraform init && terraform destroy -auto-approve
+                  '''
+                }
+            }  
         }
+
+    }   
+
 }
