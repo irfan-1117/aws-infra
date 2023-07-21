@@ -1,5 +1,7 @@
 pipeline {
     agent any
+
+    withCredentials([usernameColonPassword(credentialsId: 'AWS-CRED', variable: 'AWS')])
     
     tools {
       terraform 'Terraform'
@@ -22,12 +24,10 @@ pipeline {
         stage('Backend-s3') {
             steps {
                 script {
-                  withCredentials([usernameColonPassword(credentialsId: 'AWS-CRED', variable: 'AWS')]) {
                      sh "cd $WORKSPACE/backend-support"
                      sh "terraform init"
                   }
                 }  
             }
         }
-    }
 }
