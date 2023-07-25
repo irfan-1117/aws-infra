@@ -116,13 +116,9 @@ resource "aws_instance" "application-host" {
 
     # Define the username and password
     USERNAME="appuser"
-    PASSWORD="appuser"
 
     # Create the user
     useradd -m -s /bin/bash "$USERNAME"
-
-    # Set the password for the user
-    echo "$USERNAME:$PASSWORD" | chpasswd
 
     # Add the user to the sudo group (visudo)
     usermod -aG sudo "$USERNAME"

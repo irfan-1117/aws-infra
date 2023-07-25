@@ -1,0 +1,5 @@
+---
+- hosts: localhost
+  tasks:
+    - name: Run shell script on local host
+      shell: ./install-jenkins.sh

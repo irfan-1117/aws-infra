@@ -1,13 +1,22 @@
 ---
-- name: Deploy SSH Public Key
-  hosts: application-server  # Replace with the name of the group containing your EC2 instances
+- name: Copy Public Key to Remote Host
+  hosts: application-server
   become: true
-  gather_facts: yes
+
+  vars:
+    remote_username: appuser
+    public_key_path: .ssh/id_rsa.pub
 
   tasks:
+    - name: Create .ssh directory
+      file:
+        path: /home/{{ remote_username }}/.ssh
+        state: directory
+        mode: "0700"
+
     - name: Copy public key to remote host
       authorized_key:
-        user: appuser  # Replace with the username on the remote host where you want to deploy the public key
-        key: "{{ lookup('file', '~/.ssh/id_rsa.pub') }}"
+        user: "{{ remote_username }}"
+        key: "{{ lookup('file', public_key_path) }}"
         state: present
-      when: lookup('file', '~/.ssh/id_rsa.pub') is not none
+

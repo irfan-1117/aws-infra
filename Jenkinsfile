@@ -23,7 +23,7 @@ pipeline {
             }
         }
 
-        stage('VPC') {
+        stage('EC2-Instance') {
             steps {
                 script {
                   sh '''  

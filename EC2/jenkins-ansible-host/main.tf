@@ -35,6 +35,13 @@ resource "aws_security_group" "ansible_sg" {
     cidr_blocks = ["0.0.0.0/0"]
   }
 
+  ingress {
+    from_port   = 8080 # for jenkins
+    to_port     = 8080
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"] # Allow HTTP access from anywhere
+  }
+
   egress {
     from_port   = 0
     to_port     = 0
@@ -101,13 +108,9 @@ resource "aws_instance" "ansible-host" {
 
     # Define the username and password
     USERNAME="ansible"
-    PASSWORD="ansible"
 
     # Create the user
     useradd -m -s /bin/bash "$USERNAME"
-
-    # Set the password for the user
-    echo "$USERNAME:$PASSWORD" | chpasswd
 
     # Add the user to the sudo group (visudo)
     usermod -aG sudo "$USERNAME"

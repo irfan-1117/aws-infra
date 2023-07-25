@@ -114,13 +114,9 @@ resource "aws_instance" "kube-master" {
 
     # Define the username and password
     USERNAME="kubeuser"
-    PASSWORD="kubeuser"
 
     # Create the user
     useradd -m -s /bin/bash "$USERNAME"
-
-    # Set the password for the user
-    echo "$USERNAME:$PASSWORD" | chpasswd
 
     # Add the user to the sudo group (visudo)
     usermod -aG sudo "$USERNAME"
@@ -131,9 +127,6 @@ resource "aws_instance" "kube-master" {
 
     # Restart the SSH service
     systemctl restart ssh
-
-    echo "User $USERNAME has been created and added to the sudo group."
-    echo "Password and public key authentication have been enabled for SSH."
  EOF
 
   tags = {
@@ -178,13 +171,9 @@ resource "aws_instance" "kubernetes_worker" {
 
     # Define the username and password
     USERNAME="nodeuser"
-    PASSWORD="nodeuser"
 
     # Create the user
     useradd -m -s /bin/bash "$USERNAME"
-
-    # Set the password for the user
-    echo "$USERNAME:$PASSWORD" | chpasswd
 
     # Add the user to the sudo group (visudo)
     usermod -aG sudo "$USERNAME"
@@ -195,9 +184,6 @@ resource "aws_instance" "kubernetes_worker" {
 
     # Restart the SSH service
     systemctl restart ssh
-
-    echo "User $USERNAME has been created and added to the sudo group."
-    echo "Password and public key authentication have been enabled for SSH."
  EOF
 
   tags = {

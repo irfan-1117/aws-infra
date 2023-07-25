@@ -11,7 +11,7 @@ locals {
 }
 
 module "ansible" {
-  source = "./EC2/ansible-host"
+  source = "./EC2/jenkins-ansible-host"
   region = var.region
 }
 
@@ -20,7 +20,7 @@ module "application" {
   region = var.region
 }
 
-/*module "kubernetes" {
+module "kubernetes" {
   source = "./EC2/K8s-host"
   region = var.region
-}*/
+}
